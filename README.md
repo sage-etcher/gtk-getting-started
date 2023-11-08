@@ -1,16 +1,18 @@
-# Leaf C Project Template
+# Learning GTK with C
 
-___version:___ 0.9.4.29-rc1
+___version:___ 0.1.0.1-dev
 
-A generic template for making cleanly organized C projects; lightly inspired by the GNU Coding Standards and various other resources.
+A couple of small applications to play arround and learn the basics of GTK using the C programming language.
 
 
+<!--
 ## Building the Program using GNU Make
 
 ```
 $ make build
 # make install
 ```
+-->
 
 ## Project Files
 

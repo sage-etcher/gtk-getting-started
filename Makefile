@@ -17,8 +17,8 @@
 #  limitations under the License.
 #
 
-PROJECT_NAME := Leaf C Project Template
-PROJECT_VERSION := 0.9.4.29-rc1
+PROJECT_NAME := Learning GTK with C
+PROJECT_VERSION := 0.1.0.1-dev
 # VERSION in the form MAJOR.MINOR.PATCH.BUILD-AUDIENCE
 # Example for Developer Build, version 2.14 patch 3
 # 2.14.3.841-dev
@@ -29,42 +29,53 @@ PROJECT_VERSION := 0.9.4.29-rc1
 # Important Directories
 BUILD_DIR  := ./build
 SOURCE_DIR := ./source
-DESTDIR    := /usr/local
+DESTDIR    := ./local_install
 
 INCLUDE_DIR := $(SOURCE_DIR)/include
 LIBRARY_DIR := $(SOURCE_DIR)/lib
 
-
 # Important Files
-EXAMPLE_EXEC := example.exe
-EXAMPLE_SOURCE_FILENAMES := example/main.c example/example.c
-EXAMPLE_SOURCE_FILES := $(foreach filename,$(EXAMPLE_SOURCE_FILENAMES),$(SOURCE_DIR)/$(filename))
-EXAMPLE_OBJECT_FILES := $(foreach filename,$(EXAMPLE_SOURCE_FILES),$(BUILD_DIR)/$(filename).o)
+GTK_C_FLAGS := `pkg-config --cflags gtk4`
+GTK_L_FLAGS := `pkg-config --libs gtk4`
+
+HELLO_EXEC := hello-world-gtk.exe
+HELLO_SOURCE_FILENAMES := hello/hello-world-gtk.c
+HELLO_SOURCE_FILES := $(foreach filename,$(HELLO_SOURCE_FILENAMES),$(SOURCE_DIR)/$(filename))
+HELLO_OBJECT_FILES := $(foreach filename,$(HELLO_SOURCE_FILES),$(BUILD_DIR)/$(filename).o)
+HELLO_C_FLAGS := $(GTK_C_FLAGS)
+HELLO_L_FLAGS := $(GTK_L_FLAGS)
 
 
 # Compiler and Linker Options
-CC := gcc
-LD := gcc
+#CC := /c/mingw/bin/gcc 
+#LD := /c/mingw/bin/gcc
+CC := clang
+LD := clang
 
 INCLUDE_FLAGS := -I$(INCLUDE_DIR) -I$(SOURCE_DIR)
 LIBRARY_FLAGS := -L$(LIBRARY_DIR)
 
-C_FLAGS := $(INCLUDE_FLAGS) -O3 -ansi -pedantic -Wpedantic -Wall -Werror
-LINKER_FLAGS := $(LIBRARY_FLAGS)
+
+GENERIC_C_FLAGS := $(INCLUDE_FLAGS)
+#GENERIC_C_FLAGS += -O3
+#GENERIC_C_FLAGS += -ansi -pedantic -Wpedantic
+#GENERIC_C_FLAGS += -Wall -Werror
+
+GENERIC_L_FLAGS := $(LIBRARY_FLAGS)
 
 
 # Build
 .PHONY: build
-build: $(BUILD_DIR)/$(EXAMPLE_EXEC)
+build: $(BUILD_DIR)/$(HELLO_EXEC)
 
-$(BUILD_DIR)/$(EXAMPLE_EXEC): $(EXAMPLE_OBJECT_FILES)
+$(BUILD_DIR)/$(HELLO_EXEC): $(HELLO_OBJECT_FILES)
 	mkdir -pv $(dir $@)
-	$(LD) -o $@ $(LINKER_FLAGS) $(EXAMPLE_SOURCE_FILES)
+	$(LD) -o $@ $(GENERIC_L_FLAGS) $(HELLO_L_FLAGS) $(HELLO_OBJECT_FILES)
 
 
 $(BUILD_DIR)/$(SOURCE_DIR)/%.c.o: $(SOURCE_DIR)/%.c
 	mkdir -pv $(dir $@)
-	$(CC) -c -o $@ $(C_FLAGS) $<
+	$(CC) -c -o $@ $(GENERIC_C_FLAGS) $(HELLO_C_FLAGS) $<
 
 
 # Clean
@@ -75,10 +86,10 @@ clean:
 
 # Install
 .PHONY: install
-install: $(DESTDIR)/bin/$(EXAMPLE_EXEC)
+install: $(DESTDIR)/bin/$(HELLO_EXEC)
 
 
-$(DESTDIR)/bin/$(EXAMPLE_EXEC): $(BUILD_DIR)/$(EXAMPLE_EXEC)
+$(DESTDIR)/bin/$(HELLO_EXEC): $(BUILD_DIR)/$(HELLO_EXEC)
 	mkdir -pv $(dir $@)
 	cp -fv $< $@
 
@@ -86,6 +97,6 @@ $(DESTDIR)/bin/$(EXAMPLE_EXEC): $(BUILD_DIR)/$(EXAMPLE_EXEC)
 # Uninstall
 .PHONY: uninstall
 uninstall:
-	rm -fv $(DESTDIR)/bin/$(EXAMPLE_EXEC)
+	rm -fv $(DESTDIR)/bin/$(HELLO_EXEC)
 
 
